@@ -15,5 +15,6 @@ typedef struct
 } Piece;
 
 void init_piece(Piece*, PieceColor, int xPos, int yPos);
+void move_piece(Piece* piece, int xPos, int yPos);
 
 #endif

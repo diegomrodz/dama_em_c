@@ -1,9 +1,15 @@
 #include "damac/piece.h"
 
-void init_piece(Piece* p, PieceColor pc, int x, int y) 
+void init_piece(Piece* piece, PieceColor pc, int x, int y) 
 {
-	p->color = pc;
-	p->is_queen = 0;
-	p->x = x;
-	p->y = y;
+	piece->color = pc;
+	piece->is_queen = 0;
+	piece->x = x;
+	piece->y = y;
+}
+
+void move_piece(Piece* piece, int x, int y) 
+{
+	piece->x = x;
+	piece->y = y;
 }

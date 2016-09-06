@@ -26,6 +26,10 @@ int is_valid_location(int xPos, int yPos);
 
 int can_move_piece(Board*, Piece*, int xPos, int yPos); 
 
-int can_eat_piece(Board* board, Piece* eater, Piece* eaten);
+int can_eat_piece(Board*, Piece* eater, Piece* eaten);
+
+int eat_piece(Board*, Piece* eater, Piece* eaten);
+
+void eatable_pieces(Piece**, Board*, Piece*);
 
 #endif

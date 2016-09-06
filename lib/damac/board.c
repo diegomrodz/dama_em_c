@@ -198,6 +198,75 @@ void eatable_pieces(Piece** eatables, Board* board, Piece* piece)
 	}
 }
 
+int eat_piece(Board* board, Piece* eater, Piece* eaten) 
+{
+	Piece* eatables[4];
+
+	if ( ! eater->is_queen) 
+	{
+		if (eater->color == White) 
+		{
+			if (eater->x < eaten->x) 
+			{
+				move_piece(eater, eater->x + 2, eater->y - 2);
+			}
+			else 
+			{
+				move_piece(eater, eater->x - 2, eater->y - 2);
+			}
+		}
+		else 
+		{
+			if (eater->x < eaten->x) 
+			{
+				move_piece(eater, eater->x + 2, eater->y + 2);
+			}
+			else 
+			{
+				move_piece(eater, eater->x - 2, eater->y + 2);
+			}
+		}
+	}
+	else 
+	{
+		if (eater->y < eaten->y) 
+		{
+			if (eater->x < eaten->x) 
+			{
+				move_piece(eater, eater->x + 2, eater->y - 2); 
+			}
+			else 
+			{
+				move_piece(eater, eater->x - 2, eater->y - 2); 
+			}
+		}
+		else 
+		{
+			if (eater->x < eaten->x) 
+			{
+				move_piece(eater, eater->x + 2, eater->y + 2); 
+			}
+			else 
+			{
+				move_piece(eater, eater->x - 2, eater->y + 2); 
+			}			
+		}
+	}
+
+	remove_piece(board, eaten->x, eaten->y);
+
+	eatable_pieces(eatables, board, eater);
+
+	if (eatables[0] == NULL) 
+	{
+		return 1;
+	}
+	else 
+	{
+		eat_piece(board, eater, eatables[0]);
+	}
+}
+
 int remove_piece(Board* board, int x, int y) 
 {
 	int i, j;
