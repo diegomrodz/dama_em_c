@@ -1,13 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "SDL/SDL.h"
+#include "damac/game.h"
+
+Game game;
 
 int main(void) 
 {
-	SDL_Init( SDL_INIT_EVERYTHING );
+	start_game(&game, TwoPlayers);
 
 	printf("Hello Wolrd\n");
-
-	SDL_Quit();
 
 	return 0;
 }

@@ -16,6 +16,8 @@ void init_board(Board*);
 
 void stater_board(Board*);
 
+void copy_board(Board* source, Board* dest);
+
 void add_piece(Board*, Piece*);
 
 Piece* get_piece(Board*, int xPos, int yPos);
@@ -30,6 +32,10 @@ int can_eat_piece(Board*, Piece* eater, Piece* eaten);
 
 int eat_piece(Board*, Piece* eater, Piece* eaten);
 
+int count_pieces(Board*, PieceColor);
+
 void eatable_pieces(Piece**, Board*, Piece*);
+
+int has_winner (Board*);
 
 #endif

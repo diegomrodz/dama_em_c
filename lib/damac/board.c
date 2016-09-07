@@ -36,6 +36,16 @@ void stater_board(Board* board)
 	}
 }
 
+void copy_board(Board* source, Board* dest) 
+{
+	int i;
+
+	for (i = 0; i < source->pieces_left; i += 1) 
+	{
+		add_piece(dest, source->pieces[i]);
+	}
+}
+
 void add_piece(Board* board, Piece* piece) 
 {
 	board->pieces_left += 1;
@@ -284,6 +294,61 @@ int remove_piece(Board* board, int x, int y)
 
 			return 1;
 		}
+	}
+
+	return -1;
+}
+
+int count_pieces(Board* board, PieceColor color) 
+{
+	int i, count = 0;
+
+	for (i = 0; i < board->pieces_left; i += 1) 
+	{
+		if (board->pieces[i]->color == color) 
+		{
+			count += 1;
+		}
+	}
+
+	return count;
+}
+
+int has_winner (Board* board) 
+{
+	int i;
+	int black_has_won = 1, white_has_won = 1;
+
+	if (board->pieces_left == 0) 
+	{
+		return -1;
+	}
+
+	for (i = 0; i < board->pieces_left; i += 1) 
+	{
+		if (board->pieces[i]->color == White) 
+		{
+			black_has_won = 0;
+		}
+		else 
+		{
+			white_has_won = 0;
+		}
+
+		if ( ! black_has_won && ! white_has_won) 
+		{
+			return -1;
+		}
+	}
+
+	if (black_has_won) 
+	{
+		return 0;
+	}
+	
+	if (white_has_won)
+	{
+		return 1;
 	}
 
 	return -1;

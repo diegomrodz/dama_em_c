@@ -3,8 +3,8 @@
 
 typedef enum 
 {
-	Black,
-	White
+	Black = 0,
+	White = 1
 } PieceColor;
 
 typedef struct 
@@ -15,6 +15,7 @@ typedef struct
 } Piece;
 
 void init_piece(Piece*, PieceColor, int xPos, int yPos);
-void move_piece(Piece* piece, int xPos, int yPos);
+
+void move_piece(Piece*, int xPos, int yPos);
 
 #endif
