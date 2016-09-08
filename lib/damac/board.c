@@ -12,13 +12,13 @@ void stater_board(Board* board)
 {
 	int x1, x2, y;
 
-	for (y = 0; y < BOARD_SIZE && board->pieces_left <= PIECES_QTD; y += 1) 
+	for (y = 0; y < DAMAC_BOARD_SIZE && board->pieces_left <= DAMAC_PIECES_QTD; y += 1) 
 	{
 
 		x1 = y % 2 == 0 ? 1 : 0; 
-		x2 = (BOARD_SIZE - y) % 2 == 0 ? 1 : 0; 
+		x2 = (DAMAC_BOARD_SIZE - y) % 2 == 0 ? 1 : 0; 
 
-		for (; x1 < BOARD_SIZE; x1 += 2) 
+		for (; x1 < DAMAC_BOARD_SIZE; x1 += 2) 
 		{
 			Piece black;
 	
@@ -26,11 +26,11 @@ void stater_board(Board* board)
 			add_piece(board, &black);
 		}
 
-		for (; x2 < BOARD_SIZE; x2 += 2) 
+		for (; x2 < DAMAC_BOARD_SIZE; x2 += 2) 
 		{
 			Piece white;
 
-			init_piece(&white, White, x2, BOARD_SIZE - y);
+			init_piece(&white, White, x2, DAMAC_BOARD_SIZE - y);
 			add_piece(board, &white);
 		}
 	}
@@ -77,7 +77,7 @@ Piece* get_piece(Board* board, int x, int y)
 
 int is_valid_location(int x, int y) 
 {
-	if (x < 0 || y < 0 || x > BOARD_SIZE || y > BOARD_SIZE) 
+	if (x < 0 || y < 0 || x > DAMAC_BOARD_SIZE || y > DAMAC_BOARD_SIZE) 
 	{
 		return 0;
 	}

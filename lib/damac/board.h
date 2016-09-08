@@ -3,8 +3,8 @@
 
 #include "damac/piece.h"
 
-#define BOARD_SIZE 8
-#define PIECES_QTD 12
+#define DAMAC_BOARD_SIZE 8
+#define DAMAC_PIECES_QTD 12
 
 typedef struct 
 {
