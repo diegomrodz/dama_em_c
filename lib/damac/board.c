@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "damac/board.h"
 #include "damac/piece.h"
@@ -5,33 +6,36 @@
 void init_board(Board* board) 
 {
 	board->pieces_left = 0;
-	board->pieces = malloc(1);
 }
 
 void stater_board(Board* board) 
 {
-	int x1, x2, y;
+	int x, y;
 
-	for (y = 0; y < DAMAC_BOARD_SIZE && board->pieces_left <= DAMAC_PIECES_QTD; y += 1) 
+	for (y = 0; y < 2; y += 1) 
 	{
+		x = y % 2 == 0 ? 1 : 0; 
 
-		x1 = y % 2 == 0 ? 1 : 0; 
-		x2 = (DAMAC_BOARD_SIZE - y) % 2 == 0 ? 1 : 0; 
-
-		for (; x1 < DAMAC_BOARD_SIZE; x1 += 2) 
+		for (; x < DAMAC_BOARD_SIZE; x += 2) 
 		{
-			Piece black;
-	
-			init_piece(&black, Black, x1, y);
-			add_piece(board, &black);
+			board->pieces_left += 1;
+
+			board->pieces[board->pieces_left - 1].color = Black;
+			board->pieces[board->pieces_left - 1].x = x;
+			board->pieces[board->pieces_left - 1].y = y;
+			board->pieces[board->pieces_left - 1].is_queen = 0;
 		}
 
-		for (; x2 < DAMAC_BOARD_SIZE; x2 += 2) 
-		{
-			Piece white;
+		x = y % 2 == 0 ? 0 : 1;
 
-			init_piece(&white, White, x2, DAMAC_BOARD_SIZE - y);
-			add_piece(board, &white);
+		for (; x < DAMAC_BOARD_SIZE; x += 2) 
+		{
+			board->pieces_left += 1;
+
+			board->pieces[board->pieces_left - 1].color = White;
+			board->pieces[board->pieces_left - 1].x = x;
+			board->pieces[board->pieces_left - 1].y = DAMAC_BOARD_SIZE - y;
+			board->pieces[board->pieces_left - 1].is_queen = 0;
 		}
 	}
 }
@@ -46,12 +50,9 @@ void copy_board(Board* source, Board* dest)
 	}
 }
 
-void add_piece(Board* board, Piece* piece) 
+void add_piece(Board* board, Piece piece) 
 {
 	board->pieces_left += 1;
-
-	board->pieces = realloc(board->pieces, board->pieces_left * sizeof(Piece*));
-
 	board->pieces[board->pieces_left - 1] = piece;
 }
 
@@ -66,9 +67,9 @@ Piece* get_piece(Board* board, int x, int y)
 
 	for (i = 0; i < board->pieces_left; i += 1) 
 	{
-		if (board->pieces[i]->x == x && board->pieces[i]->y == y) 
+		if (board->pieces[i].x == x && board->pieces[i].y == y) 
 		{
-			return board->pieces[i];
+			return &board->pieces[i];
 		}
 	}
 
@@ -283,7 +284,7 @@ int remove_piece(Board* board, int x, int y)
 
 	for (i = 0; i < board->pieces_left; i += 1) 
 	{
-		if (board->pieces[i]->x == x && board->pieces[i]->y == y) 
+		if (board->pieces[i].x == x && board->pieces[i].y == y) 
 		{
 			for (j = i; j < board->pieces_left; j += 1) 
 			{
@@ -305,7 +306,7 @@ int count_pieces(Board* board, PieceColor color)
 
 	for (i = 0; i < board->pieces_left; i += 1) 
 	{
-		if (board->pieces[i]->color == color) 
+		if (board->pieces[i].color == color) 
 		{
 			count += 1;
 		}
@@ -326,7 +327,7 @@ int has_winner (Board* board)
 
 	for (i = 0; i < board->pieces_left; i += 1) 
 	{
-		if (board->pieces[i]->color == White) 
+		if (board->pieces[i].color == White) 
 		{
 			black_has_won = 0;
 		}

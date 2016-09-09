@@ -3,13 +3,16 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "damac/game.h"
-
-Game game;
-SDL_Surface* screen = NULL;
-SDL_Event event;
+#include "damac/board.h"
+#include "damac/player.h"
 
 int main(void) 
 {
+	Game game;
+	Board board;
+	Player black, white;
+	SDL_Surface* screen = NULL;
+	SDL_Event event;
 	int quit = 0;
 
 	if ( ! init_game(&game, screen)) 
@@ -17,7 +20,7 @@ int main(void)
 		return 1;
 	}
 
-	start_game(&game, TwoPlayers);
+	start_game(&game, &board, &black, &white, TwoPlayers);
 
 	while ( ! quit ) 
 	{

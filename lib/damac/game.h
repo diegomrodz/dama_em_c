@@ -49,7 +49,7 @@ SDL_Rect DAMAC_STONES_WHITE;
 SDL_Rect DAMAC_STONES_BLACK_QUEEN;
 SDL_Rect DAMAC_STONES_WHITE_QUEEN;
 
-void start_game(Game*, GameOption);
+void start_game (Game*, Board*, Player* black, Player* white, GameOption); 
 
 void apply_tile(Game*, int xPos, int yPos, SDL_Rect*); 
 

@@ -4,21 +4,18 @@
 #include "damac/board.h"
 #include "damac/graphics.h"
 
-void start_game (Game* game, GameOption option) 
+void start_game (Game* game, Board* board, Player* black, Player* white, GameOption option) 
 {
-	Board board;
-	Player black, white;
+	init_board(board);
+	stater_board(board);
 
-	init_board(&board);
-	stater_board(&board);
+	game->board = board;
 
-	game->board = &board;
+	new_player(white, White);
+	new_player(black, Black);
 
-	new_player(&white, White);
-	new_player(&black, Black);
-
-	game->white_player = &white;
-	game->black_player = &black;
+	game->white_player = white;
+	game->black_player = black;
 
 	game->is_running = 1;
 }
@@ -117,13 +114,13 @@ void draw_game (Game* game)
 
 	for (i = 0; i < game->board->pieces_left; i += 1) 
 	{
-		if (game->board->pieces[i]->color == Black) 
+		if (game->board->pieces[i].color == Black) 
 		{
-			apply_piece(game, game->board->pieces[i]->x + 1, game->board->pieces[i]->y + 1, &DAMAC_STONES_BLACK);
+			apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_BLACK);
 		}
 		else 
 		{
-			apply_piece(game, game->board->pieces[i]->x + 1, game->board->pieces[i]->y + 1, &DAMAC_STONES_WHITE);
+			apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y, &DAMAC_STONES_WHITE);
 		}
 	}
 
@@ -171,10 +168,10 @@ int init_game(Game* game, SDL_Surface* screen)
 	DAMAC_WOOD_BOARD_DOWN_RIGHT = (SDL_Rect){ .x = 128, .y = 64, .w = 33, .h = 33 };
 
 	DAMAC_STONES_BLACK = (SDL_Rect){ .x = 0, .y = 0, .w = 32, .h = 32 };
-	DAMAC_STONES_WHITE = (SDL_Rect){ .x = 96, .y = 0, .w = 32, .h = 32 };
+	DAMAC_STONES_WHITE = (SDL_Rect){ .x = 64, .y = 0, .w = 32, .h = 32 };
 
 	DAMAC_STONES_BLACK_QUEEN = (SDL_Rect){ .x = 0, .y = 32, .w = 32, .h = 32 };
-	DAMAC_STONES_WHITE_QUEEN = (SDL_Rect){ .x = 96, .y = 32, .w = 32, .h = 32 };
+	DAMAC_STONES_WHITE_QUEEN = (SDL_Rect){ .x = 64, .y = 32, .w = 32, .h = 32 };
 
 	return 1;
 }

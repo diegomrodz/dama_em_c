@@ -9,7 +9,7 @@
 typedef struct 
 {
 	int pieces_left;
-	Piece** pieces;
+	Piece pieces[DAMAC_PIECES_QTD * DAMAC_PIECES_QTD];
 } Board;
 
 void init_board(Board*);
@@ -18,7 +18,7 @@ void stater_board(Board*);
 
 void copy_board(Board* source, Board* dest);
 
-void add_piece(Board*, Piece*);
+void add_piece(Board*, Piece);
 
 Piece* get_piece(Board*, int xPos, int yPos);
 
