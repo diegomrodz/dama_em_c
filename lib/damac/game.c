@@ -18,6 +18,8 @@ void start_game (Game* game, Board* board, Player* black, Player* white, GameOpt
 	game->black_player = black;
 
 	game->is_running = 1;
+	game->round = 1;
+	game->input_mode = SelectingPiece;
 }
 
 void update_game (Game* game) 
@@ -33,6 +35,11 @@ void apply_tile(Game* game, int x, int y, SDL_Rect* tile)
 void apply_piece(Game* game, int x, int y, SDL_Rect* piece) 
 {
 	apply_surface(x * 32, y * 32, DAMAC_STONES_SPREADSHEET, game->screen, piece);
+}
+
+void apply_selection(Game* game, int x, int y, SDL_Rect* piece) 
+{
+	apply_surface(x * 32, y * 32, DAMAC_SELECTION_SPREADSHEET, game->screen, piece);
 }
 
 void draw_game (Game* game) 
@@ -124,6 +131,32 @@ void draw_game (Game* game)
 		}
 	}
 
+	if (game->input_mode == SelectingPiece) 
+	{
+		if (game->round % 2 == 0) 
+		{
+			apply_selection(game, game->white_player->x + 1, game->white_player->y + 1, &DAMAC_SELECTION_BLUE);
+		}
+		else 
+		{
+			apply_selection(game, game->black_player->x + 1, game->black_player->y + 1, &DAMAC_SELECTION_BLUE);
+		}
+	}
+	else if (game->input_mode == SelectingPieceMove) 
+	{
+		for (i = 0; i < game->place_selected_length; i += 1) 
+		{
+			if (i == game->place_selected_index) 
+			{
+				apply_selection(game, game->movable_places[i].x + 1, game->movable_places[i].y + 1, &DAMAC_SELECTION_RED);
+			}
+			else 
+			{
+				apply_selection(game, game->movable_places[i].x + 1, game->movable_places[i].y + 1, &DAMAC_SELECTION_BLUE);
+			}
+		}
+	}
+
 	// Refresh screen
 	SDL_Flip(game->screen);
 }
@@ -149,6 +182,7 @@ int init_game(Game* game, SDL_Surface* screen)
 	// Inicializa todas spread sheets
 	DAMAC_WOOD_SPREADSHEET = load_image("res/wood.png");
 	DAMAC_STONES_SPREADSHEET = load_image("res/stones.png");
+	DAMAC_SELECTION_SPREADSHEET = load_image("res/selection.png");
 
 	DAMAC_WOOD_WHITE_VERTICAL = (SDL_Rect){ .x = 0, .y = 0, .w = 33, .h = 33 };
 	DAMAC_WOOD_WHITE_HORIZONTAL = (SDL_Rect){ .x = 33, .y = 0, .w = 33, .h = 33 };
@@ -173,7 +207,207 @@ int init_game(Game* game, SDL_Surface* screen)
 	DAMAC_STONES_BLACK_QUEEN = (SDL_Rect){ .x = 0, .y = 32, .w = 32, .h = 32 };
 	DAMAC_STONES_WHITE_QUEEN = (SDL_Rect){ .x = 64, .y = 32, .w = 32, .h = 32 };
 
+	DAMAC_SELECTION_BLUE = (SDL_Rect){ .x = 0, .y = 0, .w = 32, .h = 32 };
+	DAMAC_SELECTION_RED = (SDL_Rect){ .x = 32, .y = 0, .w = 32, .h = 32 };
+
 	return 1;
+}
+
+void player_select_piece(Game* game) 
+{
+	if (game->round % 2 == 0) 
+	{
+		Piece* piece = get_piece(game->board, game->white_player->x, game->white_player->y);
+
+		if (piece != NULL && piece->color == White) 
+		{
+			game->selected_piece = piece;
+			game->input_mode = SelectingPieceMove;
+			set_selectable_places(game);
+		}
+	}
+	else 
+	{
+		Piece* piece = get_piece(game->board, game->black_player->x, game->black_player->y);
+
+		if (piece != NULL && piece->color == Black) 
+		{
+			game->selected_piece = piece;
+			game->input_mode = SelectingPieceMove;
+			set_selectable_places(game);
+		}
+	}
+}
+
+void escape_selection(Game* game) 
+{
+	game->input_mode = SelectingPiece;
+	game->selected_piece = NULL;
+}
+
+void player_select_place(Game* game) 
+{
+
+}
+
+void set_selectable_places(Game* game) 
+{
+	int index = 0;
+
+	game->place_selected_length = 0;
+	game->place_selected_index = 0;
+
+	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x + 1, game->selected_piece->y + 1)) 
+	{
+		game->movable_places[index].x = game->selected_piece->x + 1;
+		game->movable_places[index].y = game->selected_piece->y + 1;
+
+		game->place_selected_length += 1;
+
+		index += 1;
+	}
+
+	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x - 1, game->selected_piece->y - 1)) 
+	{
+		game->movable_places[index].x = game->selected_piece->x - 1;
+		game->movable_places[index].y = game->selected_piece->y - 1;
+
+		game->place_selected_length += 1;
+
+		index += 1;
+	}
+
+	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x + 1, game->selected_piece->y - 1)) 
+	{
+		game->movable_places[index].x = game->selected_piece->x + 1;
+		game->movable_places[index].y = game->selected_piece->y - 1;
+
+		game->place_selected_length += 1;
+
+		index += 1;
+	}
+
+	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x - 1, game->selected_piece->y + 1)) 
+	{
+		game->movable_places[index].x = game->selected_piece->x - 1;
+		game->movable_places[index].y = game->selected_piece->y + 1;
+
+		game->place_selected_length += 1;
+
+		index += 1;
+	}
+}
+
+void move_selection_up(Game* game) 
+{
+	if (game->input_mode == SelectingPiece) 
+	{
+		if (game->round % 2 == 0) 
+		{
+			if (game->white_player->y - 1 >= 0) 
+			{
+				game->white_player->y -= 1;
+			}
+		}
+		else 
+		{
+			if (game->black_player->y - 1 >= 0) 
+			{
+				game->black_player->y -= 1;
+			}
+		}
+	}
+	else if (game->input_mode == SelectingPieceMove) 
+	{
+		if (game->place_selected_index + 1 < game->place_selected_length) 
+		{
+			game->place_selected_index += 1;
+		}
+	}
+}
+
+void move_selection_down(Game* game) 
+{
+	if (game->input_mode == SelectingPiece) 
+	{
+		if (game->round % 2 == 0) 
+		{
+			if (game->white_player->y + 1 < DAMAC_BOARD_SIZE) 
+			{
+				game->white_player->y += 1;
+			}
+		}
+		else 
+		{
+			if (game->black_player->y + 1 < DAMAC_BOARD_SIZE) 
+			{
+				game->black_player->y += 1;
+			}
+		}
+	}
+	else if (game->input_mode == SelectingPieceMove) 
+	{
+		if (game->place_selected_index - 1 >= 0) 
+		{
+			game->place_selected_index -= 1;
+		}
+	}
+}
+
+void move_selection_left(Game* game) 
+{
+	if (game->input_mode == SelectingPiece) 
+	{
+		if (game->round % 2 == 0) 
+		{
+			if (game->white_player->x - 1 >= 0) 
+			{
+				game->white_player->x -= 1;
+			}
+		}
+		else 
+		{
+			if (game->black_player->x - 1 >= 0) 
+			{
+				game->black_player->x -= 1;
+			}
+		}
+	}
+	else if (game->input_mode == SelectingPieceMove) 
+	{
+		if (game->place_selected_index - 1 >= 0) 
+		{
+			game->place_selected_index -= 1;
+		}
+	}
+}
+
+void move_selection_right(Game* game) 
+{
+	if (game->input_mode == SelectingPiece) 
+	{
+		if (game->round % 2 == 0) 
+		{
+			if (game->white_player->x + 1 < DAMAC_BOARD_SIZE) 
+			{
+				game->white_player->x += 1;
+			}
+		}
+		else 
+		{
+			if (game->black_player->x + 1 < DAMAC_BOARD_SIZE) 
+			{
+				game->black_player->x += 1;
+			}
+		}
+	}
+	else if (game->input_mode == SelectingPieceMove) 
+	{
+		if (game->place_selected_index + 1 < game->place_selected_length) 
+		{
+			game->place_selected_index += 1;
+		}
+	}
 }
 
 void clean_game(Game* game) 

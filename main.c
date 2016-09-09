@@ -37,11 +37,33 @@ int main(void)
 				switch(event.key.keysym.sym) 
 				{
 					case SDLK_UP:
-						game.is_running = 0;
+						move_selection_up(&game);
 						break;
-					case SDLK_DOWN: break;
-					case SDLK_LEFT: break;
-					case SDLK_RIGHT: break;
+					case SDLK_DOWN: 
+						move_selection_down(&game);
+						break;
+					case SDLK_LEFT: 
+						move_selection_left(&game);
+						break;
+					case SDLK_RIGHT: 
+						move_selection_right(&game);
+						break;
+					case SDLK_ESCAPE:
+						if (game.input_mode == SelectingPieceMove) 
+						{
+							escape_selection(&game);
+						}
+						break;
+					case SDLK_RETURN:
+						if (game.input_mode == SelectingPiece) 
+						{
+							player_select_piece(&game);
+						}
+						else if (game.input_mode == SelectingPieceMove) 
+						{
+							player_select_place(&game);
+						}
+						break;
 					default:
 						break;
 				}

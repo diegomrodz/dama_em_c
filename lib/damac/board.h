@@ -12,6 +12,11 @@ typedef struct
 	Piece pieces[DAMAC_PIECES_QTD * DAMAC_PIECES_QTD];
 } Board;
 
+typedef struct 
+{
+	int x, y;
+} Place;
+
 void init_board(Board*);
 
 void stater_board(Board*);

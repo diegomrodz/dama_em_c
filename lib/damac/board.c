@@ -12,7 +12,7 @@ void stater_board(Board* board)
 {
 	int x, y;
 
-	for (y = 0; y < 2; y += 1) 
+	for (y = 0; y < 3; y += 1) 
 	{
 		x = y % 2 == 0 ? 1 : 0; 
 
@@ -93,12 +93,14 @@ int is_valid_location(int x, int y)
 
 int can_move_piece(Board* board, Piece* piece, int x, int y) 
 {
-	if (is_valid_location(x, y)) 
+	if ( ! is_valid_location(x, y)) 
 	{
 		return 0;
 	}
 
-	if (get_piece(board, x, y) != NULL) 
+	Piece* aux = get_piece(board, x, y);
+
+	if (aux != NULL && get_piece(board, x, y)->color == piece->color && ! can_eat_piece(board, piece, aux)) 
 	{
 		return 0;
 	}

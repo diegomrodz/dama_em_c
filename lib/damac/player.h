@@ -6,6 +6,7 @@
 typedef struct
 {
 	int score;
+	int x, y;
 	PieceColor color;
 } Player;
 
