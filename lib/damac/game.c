@@ -24,6 +24,21 @@ void start_game (Game* game, Board* board, Player* black, Player* white, GameOpt
 
 void update_game (Game* game) 
 {
+	int winner = has_winner(game->board);
+
+	if (winner != -1) 
+	{
+		if (winner == 0) 
+		{
+			printf("O Jogador preto venceu!\n");
+		}
+		else 
+		{
+			printf("O Jogador branco venceu!\n");
+		}
+
+		game->is_running = 0;
+	}
 }
 
 void apply_tile(Game* game, int x, int y, SDL_Rect* tile) 
@@ -221,8 +236,12 @@ void player_select_piece(Game* game)
 		if (piece != NULL && piece->color == White) 
 		{
 			game->selected_piece = piece;
-			game->input_mode = SelectingPieceMove;
 			set_selectable_places(game);
+
+			if (game->place_selected_length > 0) 
+			{
+				game->input_mode = SelectingPieceMove;
+			}
 		}
 	}
 	else 
@@ -232,8 +251,12 @@ void player_select_piece(Game* game)
 		if (piece != NULL && piece->color == Black) 
 		{
 			game->selected_piece = piece;
-			game->input_mode = SelectingPieceMove;
 			set_selectable_places(game);
+
+			if (game->place_selected_length > 0) 
+			{
+				game->input_mode = SelectingPieceMove;
+			}
 		}
 	}
 }
@@ -269,49 +292,119 @@ void player_select_place(Game* game)
 
 void set_selectable_places(Game* game) 
 {
+	Piece* piece;
 	int index = 0;
 
 	game->place_selected_length = 0;
 	game->place_selected_index = 0;
 
-	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x + 1, game->selected_piece->y + 1)) 
+	piece = get_piece(game->board, game->selected_piece->x + 1, game->selected_piece->y + 1);
+
+	if (piece == NULL) 
 	{
-		game->movable_places[index].x = game->selected_piece->x + 1;
-		game->movable_places[index].y = game->selected_piece->y + 1;
+		if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x + 1, game->selected_piece->y + 1)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x + 1;
+			game->movable_places[index].y = game->selected_piece->y + 1;
 
-		game->place_selected_length += 1;
+			game->place_selected_length += 1;
 
-		index += 1;
+			index += 1;
+		}
+	}
+	else 
+	{
+		if (can_eat_piece(game->board, game->selected_piece, piece)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x + 1;
+			game->movable_places[index].y = game->selected_piece->y + 1;
+
+			game->place_selected_length += 1;
+
+			index += 1;
+		}
 	}
 
-	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x - 1, game->selected_piece->y - 1)) 
+	piece = get_piece(game->board, game->selected_piece->x - 1, game->selected_piece->y - 1);
+
+	if (piece == NULL) 
 	{
-		game->movable_places[index].x = game->selected_piece->x - 1;
-		game->movable_places[index].y = game->selected_piece->y - 1;
+		if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x - 1, game->selected_piece->y - 1)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x - 1;
+			game->movable_places[index].y = game->selected_piece->y - 1;
 
-		game->place_selected_length += 1;
+			game->place_selected_length += 1;
 
-		index += 1;
+			index += 1;
+		}
+	}
+	else 
+	{
+		if (can_eat_piece(game->board, game->selected_piece, piece)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x - 1;
+			game->movable_places[index].y = game->selected_piece->y - 1;
+
+			game->place_selected_length += 1;
+
+			index += 1;
+		}
 	}
 
-	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x + 1, game->selected_piece->y - 1)) 
+	piece = get_piece(game->board, game->selected_piece->x + 1, game->selected_piece->y - 1);
+
+	if (piece == NULL) 
 	{
-		game->movable_places[index].x = game->selected_piece->x + 1;
-		game->movable_places[index].y = game->selected_piece->y - 1;
+		if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x + 1, game->selected_piece->y - 1)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x + 1;
+			game->movable_places[index].y = game->selected_piece->y - 1;
 
-		game->place_selected_length += 1;
+			game->place_selected_length += 1;
 
-		index += 1;
+			index += 1;
+		}
+	}
+	else 
+	{
+		if (can_eat_piece(game->board, game->selected_piece, piece)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x + 1;
+			game->movable_places[index].y = game->selected_piece->y - 1;
+
+			game->place_selected_length += 1;
+
+			index += 1;
+		}
 	}
 
-	if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x - 1, game->selected_piece->y + 1)) 
+
+	piece = get_piece(game->board, game->selected_piece->x - 1, game->selected_piece->y + 1);
+
+	if (piece == NULL) 
 	{
-		game->movable_places[index].x = game->selected_piece->x - 1;
-		game->movable_places[index].y = game->selected_piece->y + 1;
+		if (can_move_piece(game->board, game->selected_piece, game->selected_piece->x - 1, game->selected_piece->y + 1)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x - 1;
+			game->movable_places[index].y = game->selected_piece->y + 1;
 
-		game->place_selected_length += 1;
+			game->place_selected_length += 1;
 
-		index += 1;
+			index += 1;
+		}
+	}
+	else 
+	{
+		if (can_eat_piece(game->board, game->selected_piece, piece)) 
+		{
+			game->movable_places[index].x = game->selected_piece->x - 1;
+			game->movable_places[index].y = game->selected_piece->y + 1;
+
+			game->place_selected_length += 1;
+
+			index += 1;
+		}
 	}
 }
 
@@ -431,6 +524,7 @@ void clean_game(Game* game)
 {
 	SDL_FreeSurface(DAMAC_WOOD_SPREADSHEET);
 	SDL_FreeSurface(DAMAC_STONES_SPREADSHEET);
-
+	SDL_FreeSurface(DAMAC_SELECTION_SPREADSHEET);
+ 
 	SDL_Quit();
 }

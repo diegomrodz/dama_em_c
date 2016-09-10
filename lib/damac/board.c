@@ -100,16 +100,36 @@ int can_move_piece(Board* board, Piece* piece, int x, int y)
 
 	Piece* aux = get_piece(board, x, y);
 
-	if (aux != NULL && aux->color == piece->color && ! can_eat_piece(board, piece, aux)) 
+	if (aux != NULL) 
 	{
 		return 0;
+	}
+
+	if ( ! piece->is_queen) 
+	{
+		if (piece->color == White) 
+		{
+			if (piece->y < y) 
+			{
+				return 0;
+			}
+		}
+		else 
+		{
+			if (piece->y > y) 
+			{
+				return 0;
+			}
+		}
 	}
 
 	return 1;
 }
 
+
 int can_eat_piece(Board* board, Piece* eater, Piece* eaten) 
 {
+	// Uma peça não poderá comer uma peça de mesma cor
 	if (eater->color == eaten->color) 
 	{
 		return 0;
@@ -119,15 +139,22 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 	{
 		if (eater->color == White) 
 		{
+			// Uma peça branca comum não pode comer uma peça a baixo de dela
 			if (eater->y < eaten->y) 
 			{
 				return 0;
 			}
 
+			//     X
+			//   P
+			// B
 			if (eater->x < eaten->x) 
 			{
 				return can_move_piece(board, eater, eaten->x + 1, eaten->y - 1); 
 			}
+			// O
+			//   P
+			//     B
 			else 
 			{
 				return can_move_piece(board, eater, eaten->x - 1, eaten->y - 1); 
@@ -135,15 +162,22 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 		}
 		else 
 		{
+			// Uma peça preta comum não pode comer uma peça a cima dela
 			if (eater->y > eaten->y) 
 			{
 				return 0;
 			} 
 
+			// P
+			//   B
+			//     X
 			if (eater->x < eaten->x) 
 			{
 				return can_move_piece(board, eater, eaten->x + 1, eaten->y + 1); 
 			}
+			//     P
+			//   B
+			// X
 			else 
 			{
 				return can_move_piece(board, eater, eaten->x - 1, eaten->y + 1); 
@@ -152,12 +186,19 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 	}
 	else 
 	{
+		// Uma peça dama pode comer em qualquer direção
 		if (eater->y < eaten->y) 
 		{
+			//     X
+			//   P
+			// B
 			if (eater->x < eaten->x) 
 			{
 				return can_move_piece(board, eater, eaten->x + 1, eaten->y - 1); 
 			}
+			// O
+			//   P
+			//     B
 			else 
 			{
 				return can_move_piece(board, eater, eaten->x - 1, eaten->y - 1); 
@@ -165,10 +206,16 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 		}
 		else
 		{
+			// P
+			//   B
+			//     X
 			if (eater->x < eaten->x) 
 			{
 				return can_move_piece(board, eater, eaten->x + 1, eaten->y + 1); 
 			}
+			//     P
+			//   B
+			// X
 			else 
 			{
 				return can_move_piece(board, eater, eaten->x - 1, eaten->y + 1); 
