@@ -12,9 +12,9 @@ void stater_board(Board* board)
 {
 	int x, y;
 
-	for (y = 0; y < 3; y += 1) 
+	for (y = 1; y <= 3; y += 1) 
 	{
-		x = y % 2 == 0 ? 1 : 0; 
+		x = y % 2 == 0 ? 0 : 1; 
 
 		for (; x < DAMAC_BOARD_SIZE; x += 2) 
 		{
@@ -22,11 +22,11 @@ void stater_board(Board* board)
 
 			board->pieces[board->pieces_left - 1].color = Black;
 			board->pieces[board->pieces_left - 1].x = x;
-			board->pieces[board->pieces_left - 1].y = y;
+			board->pieces[board->pieces_left - 1].y = y - 1;
 			board->pieces[board->pieces_left - 1].is_queen = 0;
 		}
 
-		x = y % 2 == 0 ? 0 : 1;
+		x = y % 2 == 0 ? 1 : 0;
 
 		for (; x < DAMAC_BOARD_SIZE; x += 2) 
 		{
@@ -78,7 +78,7 @@ Piece* get_piece(Board* board, int x, int y)
 
 int is_valid_location(int x, int y) 
 {
-	if (x < 0 || y < 0 || x > DAMAC_BOARD_SIZE || y > DAMAC_BOARD_SIZE) 
+	if (x < 0 || y < 0 || x > DAMAC_BOARD_SIZE - 1 || y > DAMAC_BOARD_SIZE - 1) 
 	{
 		return 0;
 	}
@@ -100,7 +100,7 @@ int can_move_piece(Board* board, Piece* piece, int x, int y)
 
 	Piece* aux = get_piece(board, x, y);
 
-	if (aux != NULL && get_piece(board, x, y)->color == piece->color && ! can_eat_piece(board, piece, aux)) 
+	if (aux != NULL && aux->color == piece->color && ! can_eat_piece(board, piece, aux)) 
 	{
 		return 0;
 	}
@@ -126,11 +126,11 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 
 			if (eater->x < eaten->x) 
 			{
-				return can_move_piece(board, eater, eater->x + 2, eater->y - 2); 
+				return can_move_piece(board, eater, eaten->x + 1, eaten->y - 1); 
 			}
 			else 
 			{
-				return can_move_piece(board, eater, eater->x - 2, eater->y - 2); 
+				return can_move_piece(board, eater, eaten->x - 1, eaten->y - 1); 
 			}
 		}
 		else 
@@ -142,11 +142,11 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 
 			if (eater->x < eaten->x) 
 			{
-				return can_move_piece(board, eater, eater->x + 2, eater->y + 2); 
+				return can_move_piece(board, eater, eaten->x + 1, eaten->y + 1); 
 			}
 			else 
 			{
-				return can_move_piece(board, eater, eater->x - 2, eater->y + 2); 
+				return can_move_piece(board, eater, eaten->x - 1, eaten->y + 1); 
 			}
 		}
 	}
@@ -156,22 +156,22 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 		{
 			if (eater->x < eaten->x) 
 			{
-				return can_move_piece(board, eater, eater->x + 2, eater->y - 2); 
+				return can_move_piece(board, eater, eaten->x + 1, eaten->y - 1); 
 			}
 			else 
 			{
-				return can_move_piece(board, eater, eater->x - 2, eater->y - 2); 
+				return can_move_piece(board, eater, eaten->x - 1, eaten->y - 1); 
 			}
 		}
 		else
 		{
 			if (eater->x < eaten->x) 
 			{
-				return can_move_piece(board, eater, eater->x + 2, eater->y + 2); 
+				return can_move_piece(board, eater, eaten->x + 1, eaten->y + 1); 
 			}
 			else 
 			{
-				return can_move_piece(board, eater, eater->x - 2, eater->y + 2); 
+				return can_move_piece(board, eater, eaten->x - 1, eaten->y + 1); 
 			}
 		}
 	}
@@ -213,8 +213,6 @@ void eatable_pieces(Piece** eatables, Board* board, Piece* piece)
 
 int eat_piece(Board* board, Piece* eater, Piece* eaten) 
 {
-	Piece* eatables[4];
-
 	if ( ! eater->is_queen) 
 	{
 		if (eater->color == White) 
@@ -267,17 +265,6 @@ int eat_piece(Board* board, Piece* eater, Piece* eaten)
 	}
 
 	remove_piece(board, eaten->x, eaten->y);
-
-	eatable_pieces(eatables, board, eater);
-
-	if (eatables[0] == NULL) 
-	{
-		return 1;
-	}
-	else 
-	{
-		eat_piece(board, eater, eatables[0]);
-	}
 }
 
 int remove_piece(Board* board, int x, int y) 

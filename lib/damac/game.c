@@ -18,13 +18,12 @@ void start_game (Game* game, Board* board, Player* black, Player* white, GameOpt
 	game->black_player = black;
 
 	game->is_running = 1;
-	game->round = 1;
+	game->round = 0;
 	game->input_mode = SelectingPiece;
 }
 
 void update_game (Game* game) 
 {
-
 }
 
 void apply_tile(Game* game, int x, int y, SDL_Rect* tile) 
@@ -127,7 +126,7 @@ void draw_game (Game* game)
 		}
 		else 
 		{
-			apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y, &DAMAC_STONES_WHITE);
+			apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_WHITE);
 		}
 	}
 
@@ -247,7 +246,25 @@ void escape_selection(Game* game)
 
 void player_select_place(Game* game) 
 {
+	Place place = game->movable_places[game->place_selected_index];
+	Piece* piece = get_piece(game->board, place.x, place.y);
 
+	if (piece == NULL) 
+	{
+		move_piece(game->selected_piece, place.x, place.y);
+		
+		game->round += 1;
+		game->input_mode = SelectingPiece;
+		game->selected_piece = NULL;
+	}
+	else
+	{
+		eat_piece(game->board, game->selected_piece, piece);
+
+		game->round += 1;
+		game->input_mode = SelectingPiece;
+		game->selected_piece = NULL;
+	}
 }
 
 void set_selectable_places(Game* game) 
