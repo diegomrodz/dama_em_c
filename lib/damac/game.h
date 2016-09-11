@@ -23,6 +23,7 @@ typedef struct
 {
 	int round;
 	int is_running;
+	int is_mode_locked;
 	int place_selected_index;
 	int place_selected_length;
 	GameOption game_option;

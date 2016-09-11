@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include "SDL/SDL.h"
 #include "damac/game.h" 
 #include "damac/piece.h"
 #include "damac/player.h"
@@ -19,6 +21,7 @@ void start_game (Game* game, Board* board, Player* black, Player* white, GameOpt
 
 	game->is_running = 1;
 	game->round = 0;
+	game->is_mode_locked = 0;
 	game->input_mode = SelectingPiece;
 }
 
@@ -38,6 +41,16 @@ void update_game (Game* game)
 		}
 
 		game->is_running = 0;
+		return;
+	}
+
+	if (game->round % 2 == 0) 
+	{
+		SDL_WM_SetCaption("Dama em C - Jogador Branco", NULL);
+	}
+	else 
+	{
+		SDL_WM_SetCaption("Dama em C - Jogador Preto", NULL);
 	}
 }
 
@@ -263,19 +276,23 @@ void player_select_piece(Game* game)
 
 void escape_selection(Game* game) 
 {
-	game->input_mode = SelectingPiece;
-	game->selected_piece = NULL;
+	if ( ! game->is_mode_locked) 
+	{
+		game->input_mode = SelectingPiece;
+		game->selected_piece = NULL;
+	}
 }
 
 void player_select_place(Game* game) 
 {
 	Place place = game->movable_places[game->place_selected_index];
 	Piece* piece = get_piece(game->board, place.x, place.y);
+	Piece* eatables[4] = { NULL };
 
 	if (piece == NULL) 
 	{
 		move_piece(game->selected_piece, place.x, place.y);
-		
+	
 		game->round += 1;
 		game->input_mode = SelectingPiece;
 		game->selected_piece = NULL;
@@ -283,10 +300,21 @@ void player_select_place(Game* game)
 	else
 	{
 		eat_piece(game->board, game->selected_piece, piece);
+	
+		eatable_pieces(&eatables, game->board, game->selected_piece);
 
-		game->round += 1;
-		game->input_mode = SelectingPiece;
-		game->selected_piece = NULL;
+		if (eatables[0] != NULL) 
+		{
+			set_selectable_places(game);
+			game->is_mode_locked = 1;
+		}
+		else 
+		{
+			game->round += 1;
+			game->is_mode_locked = 0;
+			game->input_mode = SelectingPiece;
+			game->selected_piece = NULL;
+		}
 	}
 }
 

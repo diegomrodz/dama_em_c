@@ -83,7 +83,7 @@ int count_pieces(Board*, PieceColor);
 /**
  * Popula um array com as peças comiveis de uma peça no tabuleiro
  */
-void eatable_pieces(Piece**, Board*, Piece*);
+void eatable_pieces(Piece***, Board*, Piece*);
 
 /**
  * Retorna um número indicando se houve um vencedor no tabuleiro

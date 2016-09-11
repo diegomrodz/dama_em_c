@@ -229,7 +229,7 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 	}
 }
 
-void eatable_pieces(Piece** eatables, Board* board, Piece* piece) 
+void eatable_pieces(Piece*** eatables, Board* board, Piece* piece) 
 {
 	int count = 0;
 	Piece* neighbor;
