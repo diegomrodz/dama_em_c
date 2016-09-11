@@ -14,28 +14,30 @@ void stater_board(Board* board)
 
 	for (y = 1; y <= 3; y += 1) 
 	{
+		// Altera o valor de x para as linhas superiores
 		x = y % 2 == 0 ? 0 : 1; 
 
 		for (; x < DAMAC_BOARD_SIZE; x += 2) 
 		{
+			board->pieces[board->pieces_left].color = Black;
+			board->pieces[board->pieces_left].x = x;
+			board->pieces[board->pieces_left].y = y - 1;
+			board->pieces[board->pieces_left].is_queen = 0;
+		
 			board->pieces_left += 1;
-
-			board->pieces[board->pieces_left - 1].color = Black;
-			board->pieces[board->pieces_left - 1].x = x;
-			board->pieces[board->pieces_left - 1].y = y - 1;
-			board->pieces[board->pieces_left - 1].is_queen = 0;
 		}
 
+		// Altera o valor de x para as linhas superiores
 		x = y % 2 == 0 ? 1 : 0;
 
 		for (; x < DAMAC_BOARD_SIZE; x += 2) 
 		{
+			board->pieces[board->pieces_left].color = White;
+			board->pieces[board->pieces_left].x = x;
+			board->pieces[board->pieces_left].y = DAMAC_BOARD_SIZE - y;
+			board->pieces[board->pieces_left].is_queen = 0;
+			
 			board->pieces_left += 1;
-
-			board->pieces[board->pieces_left - 1].color = White;
-			board->pieces[board->pieces_left - 1].x = x;
-			board->pieces[board->pieces_left - 1].y = DAMAC_BOARD_SIZE - y;
-			board->pieces[board->pieces_left - 1].is_queen = 0;
 		}
 	}
 }
@@ -52,8 +54,9 @@ void copy_board(Board* source, Board* dest)
 
 void add_piece(Board* board, Piece piece) 
 {
+	board->pieces[board->pieces_left] = piece;
+
 	board->pieces_left += 1;
-	board->pieces[board->pieces_left - 1] = piece;
 }
 
 Piece* get_piece(Board* board, int x, int y) 
@@ -83,6 +86,7 @@ int is_valid_location(int x, int y)
 		return 0;
 	}
 
+	// Posições como (2,2), (4,4) são impossíveis
 	if (y % 2 == 0 && x % 2 == 0) 
 	{
 		return 0;
@@ -105,6 +109,7 @@ int can_move_piece(Board* board, Piece* piece, int x, int y)
 		return 0;
 	}
 
+	// Verifica se a peça está se movendo na posição de y correta de acordo com sua cor
 	if ( ! piece->is_queen) 
 	{
 		if (piece->color == White) 
@@ -187,7 +192,7 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 	else 
 	{
 		// Uma peça dama pode comer em qualquer direção
-		if (eater->y < eaten->y) 
+		if (eater->y > eaten->y) 
 		{
 			//     X
 			//   P
@@ -229,6 +234,9 @@ void eatable_pieces(Piece** eatables, Board* board, Piece* piece)
 	int count = 0;
 	Piece* neighbor;
 
+	//    N
+	//  P
+	//
 	neighbor = get_piece(board, piece->x + 1, piece->y + 1); 
 
 	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
@@ -236,6 +244,9 @@ void eatable_pieces(Piece** eatables, Board* board, Piece* piece)
 		eatables[count++] = neighbor;
 	}
 
+	//    
+	//   P
+	// N
 	neighbor = get_piece(board, piece->x - 1, piece->y - 1); 
 
 	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
@@ -243,6 +254,9 @@ void eatable_pieces(Piece** eatables, Board* board, Piece* piece)
 		eatables[count++] = neighbor;
 	}
 
+	// N
+	//   P
+	//
 	neighbor = get_piece(board, piece->x - 1, piece->y + 1); 
 
 	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
@@ -250,6 +264,9 @@ void eatable_pieces(Piece** eatables, Board* board, Piece* piece)
 		eatables[count++] = neighbor;
 	}
 
+	//
+	//  P
+	//    N
 	neighbor = get_piece(board, piece->x + 1, piece->y - 1); 
 
 	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
@@ -287,7 +304,7 @@ int eat_piece(Board* board, Piece* eater, Piece* eaten)
 	}
 	else 
 	{
-		if (eater->y < eaten->y) 
+		if (eater->y > eaten->y) 
 		{
 			if (eater->x < eaten->x) 
 			{
