@@ -36,11 +36,6 @@ void init_board(Board*);
 void stater_board(Board*);
 
 /**
- * Faz uma cópia do tabuleiro para outro tabuleiro
- */
-void copy_board(Board* source, Board* dest);
-
-/**
  * Adiciona uma peça ao tabuleiro
  */
 void add_piece(Board*, Piece);
@@ -79,11 +74,6 @@ int eat_piece(Board*, Piece* eater, Piece* eaten);
  * Conta o número de peças da cor indicada no tabuleiro
  */
 int count_pieces(Board*, PieceColor);
-
-/**
- * Popula um array com as peças comiveis de uma peça no tabuleiro
- */
-void eatable_pieces(Piece***, Board*, Piece*);
 
 /**
  * Retorna um número indicando se houve um vencedor no tabuleiro

@@ -29,3 +29,9 @@ void move_piece(Piece* piece, int x, int y)
 		}
 	}
 }
+
+
+int is_on_conner(Piece* piece) 
+{
+	return piece->x == 0 || piece->x == DAMAC_BOARD_SIZE - 1 || piece->y == 0 || piece->y == DAMAC_BOARD_SIZE - 1;
+}

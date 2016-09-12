@@ -150,11 +150,25 @@ void draw_game (Game* game)
 	{
 		if (game->board->pieces[i].color == Black) 
 		{
-			apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_BLACK);
+			if (game->board->pieces[i].is_queen) 
+			{
+				apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_BLACK_QUEEN);
+			}
+			else 
+			{
+				apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_BLACK);
+			}
 		}
 		else 
 		{
-			apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_WHITE);
+			if (game->board->pieces[i].is_queen) 
+			{
+				apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_WHITE_QUEEN);
+			}
+			else 
+			{
+				apply_piece(game, game->board->pieces[i].x + 1, game->board->pieces[i].y + 1, &DAMAC_STONES_WHITE);
+			}
 		}
 	}
 
@@ -287,35 +301,19 @@ void player_select_place(Game* game)
 {
 	Place place = game->movable_places[game->place_selected_index];
 	Piece* piece = get_piece(game->board, place.x, place.y);
-	Piece* eatables[4] = { NULL };
-
+	
 	if (piece == NULL) 
 	{
 		move_piece(game->selected_piece, place.x, place.y);
-	
-		game->round += 1;
-		game->input_mode = SelectingPiece;
-		game->selected_piece = NULL;
 	}
 	else
 	{
 		eat_piece(game->board, game->selected_piece, piece);
-	
-		eatable_pieces(&eatables, game->board, game->selected_piece);
-
-		if (eatables[0] != NULL) 
-		{
-			set_selectable_places(game);
-			game->is_mode_locked = 1;
-		}
-		else 
-		{
-			game->round += 1;
-			game->is_mode_locked = 0;
-			game->input_mode = SelectingPiece;
-			game->selected_piece = NULL;
-		}
 	}
+
+	game->round += 1;
+	game->input_mode = SelectingPiece;
+	game->selected_piece = NULL;
 }
 
 void set_selectable_places(Game* game) 

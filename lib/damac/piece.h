@@ -18,4 +18,6 @@ void init_piece(Piece*, PieceColor, int xPos, int yPos);
 
 void move_piece(Piece*, int xPos, int yPos);
 
+int is_on_conner(Piece*);
+
 #endif

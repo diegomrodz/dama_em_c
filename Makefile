@@ -4,8 +4,8 @@ TESTS=test/
 LIBS=$(wildcard lib/*)
 INCLUDE_PATH=lib/
 
-tests: libs
-	$(CC) -std=$(STD) -W -Wall -Wpedantic main.c $(wildcard src/*) -I$(INCLUDE_PATH) -o dama -lm -lSDL -lSDL_image -lSDL_ttf
+build: libs
+	$(CC) -std=$(STD) -W -Wall main.c $(wildcard src/*) -I$(INCLUDE_PATH) -o dama -lm -lSDL -lSDL_image -lSDL_ttf
 
 libs:
 	mkdir src/

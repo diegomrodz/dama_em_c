@@ -42,16 +42,6 @@ void stater_board(Board* board)
 	}
 }
 
-void copy_board(Board* source, Board* dest) 
-{
-	int i;
-
-	for (i = 0; i < source->pieces_left; i += 1) 
-	{
-		add_piece(dest, source->pieces[i]);
-	}
-}
-
 void add_piece(Board* board, Piece piece) 
 {
 	board->pieces[board->pieces_left] = piece;
@@ -226,52 +216,6 @@ int can_eat_piece(Board* board, Piece* eater, Piece* eaten)
 				return can_move_piece(board, eater, eaten->x - 1, eaten->y + 1); 
 			}
 		}
-	}
-}
-
-void eatable_pieces(Piece*** eatables, Board* board, Piece* piece) 
-{
-	int count = 0;
-	Piece* neighbor;
-
-	//    N
-	//  P
-	//
-	neighbor = get_piece(board, piece->x + 1, piece->y + 1); 
-
-	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
-	{
-		eatables[count++] = neighbor;
-	}
-
-	//    
-	//   P
-	// N
-	neighbor = get_piece(board, piece->x - 1, piece->y - 1); 
-
-	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
-	{
-		eatables[count++] = neighbor;
-	}
-
-	// N
-	//   P
-	//
-	neighbor = get_piece(board, piece->x - 1, piece->y + 1); 
-
-	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
-	{
-		eatables[count++] = neighbor;
-	}
-
-	//
-	//  P
-	//    N
-	neighbor = get_piece(board, piece->x + 1, piece->y - 1); 
-
-	if (neighbor != NULL && can_eat_piece(board, piece, neighbor)) 
-	{
-		eatables[count++] = neighbor;
 	}
 }
 

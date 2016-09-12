@@ -6,21 +6,46 @@
 #include "damac/board.h"
 #include "damac/player.h"
 
+int comp_char(char that, char with)
+{
+	return (int)that == (int)with;
+}
+
 int main(void) 
 {
 	Game game;
 	Board board;
 	Player black, white;
+	GameOption option;
 	SDL_Surface* screen = NULL;
 	SDL_Event event;
 	int quit = 0;
+	int has_choose = 0;
+	char choice;
+
+	while ( ! has_choose)
+	{
+		printf("Você gostaria de jogar contra a máquina? [Y/N]\n");
+		scanf(" %c", &choice);
+
+		if (comp_char(choice, 'Y') || comp_char(choice, 'y'))
+		{
+			option = AgainstComputer;
+			has_choose = 1;
+		}
+		else if (comp_char(choice, 'N') || comp_char(choice, 'n'))
+		{
+			option = TwoPlayers;
+			has_choose = 1;
+		}
+	}
 
 	if ( ! init_game(&game, screen)) 
 	{
 		return 1;
 	}
 
-	start_game(&game, &board, &black, &white, TwoPlayers);
+	start_game(&game, &board, &black, &white, option);
 
 	while ( ! quit ) 
 	{
